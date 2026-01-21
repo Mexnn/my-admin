@@ -3,68 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Admin - ระบบลงสินค้าผัก</title>
+    <title>Organic Admin - จัดการสต็อกผัก</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Prompt', sans-serif; background-color: #f0f4f0; color: #2d3436; }
-        .container { max-width: 500px; margin: 40px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        h1 { color: #27ae60; text-align: center; font-size: 24px; }
-        label { display: block; margin-top: 15px; font-weight: 600; color: #555; }
-        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        button:hover { background-color: #219150; }
-        .flex-group { display: flex; gap: 10px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>🌿 Organic Stock</h1>
+        <h1>🌿 Organic Stock Manager</h1>
+        
         <div id="login-section">
-            <input type="password" id="admin-pass" placeholder="รหัสผ่านแอดมิน">
+            <input type="password" id="admin-pass" placeholder="🔑 รหัสผ่านแอดมิน">
             <button onclick="checkAuth()">เข้าสู่ระบบ</button>
         </div>
 
         <div id="admin-section" style="display:none;">
-            <label>ชื่อผักออร์แกนิก</label>
-            <input type="text" id="pName" placeholder="เช่น ผักกาดหอม, มะเขือเทศเชอร์รี่">
+            
+            <div class="form-card">
+                <h3>จัดการสินค้าผัก</h3>
+                <label>ชื่อผัก</label>
+                <input type="text" id="pName" placeholder="เช่น ผักบุ้งจีน, กะหล่ำปลี">
 
-            <div class="flex-group">
-                <div style="flex: 2;">
-                    <label>ราคา (บาท)</label>
-                    <input type="number" id="pPrice" placeholder="0.00">
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label>ราคา (บาท)</label>
+                        <input type="number" id="pPrice" placeholder="0">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>หน่วยขาย</label>
+                        <select id="pUnit">
+                            <option value="กิโลกรัม">กิโลกรัม (kg)</option>
+                            <option value="ถุง">ถุง</option>
+                            <option value="กำ">กำ</option>
+                            <option value="ขีด">ขีด</option>
+                            <option value="หัว">หัว/ลูก</option>
+                        </select>
+                    </div>
                 </div>
-                <div style="flex: 1;">
-                    <label>หน่วย</label>
-                    <select id="pUnit">
-                        <option value="กิโลกรัม">กิโลกรัม (kg)</option>
-                        <option value="ถุง">ถุง</option>
-                        <option value="แพ็ค">แพ็ค</option>
-                        <option value="ต้น">ต้น</option>
-                    </select>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label>น้ำหนัก (กรัม)</label>
+                        <input type="number" id="pWeight" placeholder="เช่น 500">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>สต็อกคงเหลือ</label>
+                        <input type="number" id="pStock" placeholder="จำนวน">
+                    </div>
                 </div>
+
+                <label>รายละเอียด</label>
+                <textarea id="pDetail" rows="2" placeholder="รายละเอียดสินค้า..."></textarea>
+
+                <label>รูปภาพ (URL)</label>
+                <input type="text" id="pImg" placeholder="https://...">
+
+                <button id="btn-save" onclick="addProduct()">+ ลงสินค้าผัก</button>
+                <button id="btn-cancel" onclick="resetForm()" style="display:none; background-color: #95a5a6; margin-top: 10px;">ยกเลิกการแก้ไข</button>
+                
+                <p id="status-msg" style="text-align: center; margin-top: 10px;"></p>
             </div>
 
-            <div class="flex-group">
-                <div>
-                    <label>น้ำหนัก/ชิ้น (กรัม)</label>
-                    <input type="number" id="pWeight" placeholder="เช่น 500">
-                </div>
-                <div>
-                    <label>จำนวนสต็อก</label>
-                    <input type="number" id="pStock" placeholder="มีกี่หน่วย">
-                </div>
-            </div>
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
 
-            <label>รายละเอียดการปลูก/สรรพคุณ</label>
-            <textarea id="pDetail" rows="3" placeholder="เช่น ปลูกแบบไฮโดรโปนิกส์ ไม่ใช้สารเคมี..."></textarea>
-
-            <label>ลิงก์รูปภาพผัก</label>
-            <input type="text" id="pImg" placeholder="วางลิงก์รูปภาพที่นี่">
-
-            <button id="btn-save" onclick="addProduct()">+ ลงสินค้าผัก</button>
-            <p id="status-msg" style="text-align:center;"></p>
+            <h3>📋 รายการผักในสต็อกปัจจุบัน</h3>
+            <div id="loading" style="text-align:center; color:#7f8c8d;">กำลังโหลดข้อมูล...</div>
+            <div id="product-list"></div>
         </div>
     </div>
+
     <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
