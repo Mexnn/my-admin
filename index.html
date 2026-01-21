@@ -3,26 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - ระบบจัดการหลังบ้าน</title>
+    <title>Admin Panel - ระบบจัดการร้านค้า</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="login-section" class="container">
-        <h2>กรุณาเข้าสู่ระบบ</h2>
+        <h2>เข้าสู่ระบบแอดมิน</h2>
         <input type="password" id="admin-pass" placeholder="กรอกรหัสผ่าน">
         <button onclick="checkAuth()">เข้าสู่ระบบ</button>
     </div>
 
     <div id="admin-section" class="container" style="display:none;">
-        <h1>จัดการสินค้า</h1>
+        <h1>จัดการสต็อกสินค้า</h1>
         <hr>
         <div class="form-group">
             <h3>เพิ่มสินค้าใหม่</h3>
-            <input type="text" id="pName" placeholder="ชื่อสินค้า">
-            <input type="number" id="pPrice" placeholder="ราคา">
-            <textarea id="pDetail" placeholder="รายละเอียดสินค้า"></textarea>
-            <input type="text" id="pImg" placeholder="URL ลิงก์รูปภาพ">
-            <button id="btn-save" onclick="addProduct()">บันทึกข้อมูลสินค้า</button>
+            
+            <label>ข้อมูลทั่วไป</label>
+            <input type="text" id="pName" placeholder="ชื่อสินค้า (เช่น เสื้อยืดสีดำ)">
+            <input type="number" id="pPrice" placeholder="ราคา (บาท)">
+            
+            <label>คลังและจัดส่ง</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="pStock" placeholder="จำนวนในสต็อก (ชิ้น)">
+                <input type="number" id="pWeight" placeholder="น้ำหนัก (กรัม)">
+            </div>
+
+            <label>หมวดหมู่</label>
+            <select id="pCategory" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
+                <option value="ทั่วไป">สินค้าทั่วไป</option>
+                <option value="เสื้อผ้า">เสื้อผ้า/แฟชั่น</option>
+                <option value="อาหาร">อาหาร/เครื่องดื่ม</option>
+                <option value="ของใช้">ของใช้ในบ้าน</option>
+                <option value="อิเล็กทรอนิกส์">อุปกรณ์ไอที</option>
+            </select>
+
+            <textarea id="pDetail" placeholder="รายละเอียดสินค้าเพิ่มเติม..." rows="3"></textarea>
+            <input type="text" id="pImg" placeholder="URL ลิงก์รูปภาพสินค้า">
+            
+            <button id="btn-save" onclick="addProduct()">+ บันทึกสินค้าลงระบบ</button>
         </div>
         <p id="status-msg"></p>
     </div>
