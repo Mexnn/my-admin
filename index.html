@@ -6,72 +6,74 @@
     <title>Organic Admin - จัดการสต็อกผัก</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .image-upload-container { border: 2px dashed #C8E6C9; padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; }
+        #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; /* ซ่อนไว้ก่อน */ box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>🌿 Organic Stock Manager</h1>
+        <h1>🥗 Organic Stock Manager</h1>
         
-        <div id="login-section">
-            <input type="password" id="admin-pass" placeholder="🔑 รหัสผ่านแอดมิน">
-            <button onclick="checkAuth()">เข้าสู่ระบบ</button>
-        </div>
-
-        <div id="admin-section" style="display:none;">
+        <div class="form-card">
+            <h3>จัดการสินค้า</h3>
             
-            <div class="form-card">
-                <h3>จัดการสินค้าผัก</h3>
-                <label>ชื่อผัก</label>
-                <input type="text" id="pName" placeholder="เช่น ผักบุ้งจีน, กะหล่ำปลี">
+            <label>ชื่อสินค้า</label>
+            <input type="text" id="pName" placeholder="เช่น ผักกาดหอม">
 
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label>ราคา (บาท)</label>
-                        <input type="number" id="pPrice" placeholder="0">
-                    </div>
-                    <div style="flex: 1;">
-                        <label>หน่วยขาย</label>
-                        <select id="pUnit">
-                            <option value="กิโลกรัม">กิโลกรัม (kg)</option>
-                            <option value="ถุง">ถุง</option>
-                            <option value="กำ">กำ</option>
-                            <option value="ขีด">ขีด</option>
-                            <option value="หัว">หัว/ลูก</option>
-                        </select>
-                    </div>
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>ราคา (บาท)</label>
+                    <input type="number" id="pPrice" placeholder="0">
                 </div>
-
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label>น้ำหนัก (กรัม)</label>
-                        <input type="number" id="pWeight" placeholder="เช่น 500">
-                    </div>
-                    <div style="flex: 1;">
-                        <label>สต็อกคงเหลือ</label>
-                        <input type="number" id="pStock" placeholder="จำนวน">
-                    </div>
+                <div style="flex: 1;">
+                    <label>หน่วยขาย</label>
+                    <select id="pUnit">
+                        <option value="กก.">กิโลกรัม (kg)</option>
+                        <option value="ถุง">ถุง</option>
+                        <option value="กำ">กำ</option>
+                        <option value="ขีด">ขีด</option>
+                        <option value="หัว">หัว/ลูก</option>
+                        <option value="แพ็ค">แพ็ค</option>
+                    </select>
                 </div>
-
-                <label>รายละเอียด</label>
-                <textarea id="pDetail" rows="2" placeholder="รายละเอียดสินค้า..."></textarea>
-
-                <label>รูปภาพ (URL)</label>
-                <input type="text" id="pImg" placeholder="https://...">
-
-                <button id="btn-save" onclick="addProduct()">+ ลงสินค้าผัก</button>
-                <button id="btn-cancel" onclick="resetForm()" style="display:none; background-color: #95a5a6; margin-top: 10px;">ยกเลิกการแก้ไข</button>
-                
-                <p id="status-msg" style="text-align: center; margin-top: 10px;"></p>
             </div>
 
-            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>น้ำหนัก (กรัม)</label>
+                    <input type="number" id="pWeight" placeholder="เช่น 500">
+                </div>
+                <div style="flex: 1;">
+                    <label>สต็อกคงเหลือ</label>
+                    <input type="number" id="pStock" placeholder="จำนวน">
+                </div>
+            </div>
 
-            <h3>📋 รายการผักในสต็อกปัจจุบัน</h3>
-            <div id="loading" style="text-align:center; color:#7f8c8d;">กำลังโหลดข้อมูล...</div>
-            <div id="product-list"></div>
+            <label>รายละเอียดสินค้า</label>
+            <textarea id="pDetail" rows="2" placeholder="เช่น สดจากไร่..."></textarea>
+
+            <label style="margin-top: 20px;">รูปภาพสินค้า</label>
+            <div class="image-upload-container">
+                <input type="file" id="pImgFile" accept="image/*" onchange="previewImage()">
+                <input type="hidden" id="pImgOldUrl">
+                <br>
+                <img id="preview-img" src="" alt="Preview">
+            </div>
+
+            <button id="btn-save" onclick="saveProduct()">+ บันทึกสินค้า</button>
+            <button id="btn-cancel" onclick="resetForm()" style="display:none; margin-top: 10px;">ยกเลิกการแก้ไข</button>
+            
+            <p id="status-msg" style="text-align: center; margin-top: 10px; font-size: 14px;"></p>
         </div>
+
+        <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #ddd;">
+
+        <h3>📋 รายการในสต็อก</h3>
+        <div id="loading" style="text-align:center; color:#7f8c8d;">⏳ กำลังโหลดข้อมูล...</div>
+        <div id="product-list"></div>
     </div>
 
-    <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
