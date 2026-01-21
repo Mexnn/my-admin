@@ -1,5 +1,5 @@
 // ⚠️ ใส่ Web App URL ของคุณที่นี่
-const API_URL = "https://script.google.com/macros/s/AKfycbyaxhsSR4zj9uvSJCl6MDigDEJqnn_t8nDewp-5VVgWXpov-jiGQNqiI0OrW5NwA-OU/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyof2IPLHuQdQNZS3GcxxBg75oGmt6N05VdAO09Ik5fyJJ7wvfMF-3BhmTH5q8_fyk/exec";
 
 let isEditing = false;
 let editingRow = null;
