@@ -1,4 +1,5 @@
 // นำ Web App URL ที่ได้จากขั้นตอนที่ 1.3 มาใส่ที่นี่
+// ในไฟล์ script.js
 const API_URL = "https://script.google.com/macros/s/AKfycbwAAw7DEahdTuP9uwjIJ-OeFSz0mvJkUCM3QE5svLNL0LVLsYbXMlUkRP6k8eoL9mBW/exec"; 
 
 async function addProduct() {
