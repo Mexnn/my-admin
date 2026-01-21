@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ระบบจัดการหลังบ้าน</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="login-section" class="container">
+        <h2>กรุณาเข้าสู่ระบบ</h2>
+        <input type="password" id="admin-pass" placeholder="กรอกรหัสผ่าน">
+        <button onclick="checkAuth()">เข้าสู่ระบบ</button>
+    </div>
+
+    <div id="admin-section" class="container" style="display:none;">
+        <h1>จัดการสินค้า</h1>
+        <hr>
+        <div class="form-group">
+            <h3>เพิ่มสินค้าใหม่</h3>
+            <input type="text" id="pName" placeholder="ชื่อสินค้า">
+            <input type="number" id="pPrice" placeholder="ราคา">
+            <textarea id="pDetail" placeholder="รายละเอียดสินค้า"></textarea>
+            <input type="text" id="pImg" placeholder="URL ลิงก์รูปภาพ">
+            <button id="btn-save" onclick="addProduct()">บันทึกข้อมูลสินค้า</button>
+        </div>
+        <p id="status-msg"></p>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
