@@ -33,7 +33,7 @@ async function loadProducts() {
             html += `
             <tr style="border-bottom: 1px solid #ddd;">
                 <td style="padding:10px; text-align:center;">
-                    <img src="${p.ImageURL}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;" onerror="this.src='https://via.placeholder.com/50?text=No+Img'">
+                    <img src="${p.ImageURL}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;" onerror="this.src='https://placehold.co/50x50?text=No+Img'">
                 </td>
                 <td>
                     <strong>${p.Name}</strong><br>
