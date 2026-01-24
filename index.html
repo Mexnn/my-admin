@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .image-upload-container { border: 2px dashed #C8E6C9; padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; }
-        #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; /* ซ่อนไว้ก่อน */ box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-delete { background-color: #ff6b6b; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-edit { background-color: #f1c40f; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -27,21 +29,14 @@
                     <input type="number" id="pPrice" placeholder="0">
                 </div>
                 <div style="flex: 1;">
-                    <label>หน่วยขาย</label>
-                    <select id="pUnit">
-                        <option value="กก.">กิโลกรัม (kg)</option>
-                        <option value="ถุง">ถุง</option>
-                        <option value="กำ">กำ</option>
-                        <option value="ขีด">ขีด</option>
-                        <option value="หัว">หัว/ลูก</option>
-                        <option value="แพ็ค">แพ็ค</option>
-                    </select>
+                    <label>หน่วยขาย / ปริมาณ</label>
+                    <input type="text" id="pUnit" placeholder="เช่น กิโลกรัม, ถุง, กำ">
                 </div>
             </div>
 
             <div style="display: flex; gap: 10px;">
                 <div style="flex: 1;">
-                    <label>น้ำหนัก (กรัม)</label>
+                    <label>น้ำหนักสินค้า (กรัม)</label>
                     <input type="number" id="pWeight" placeholder="เช่น 500">
                 </div>
                 <div style="flex: 1;">
@@ -62,7 +57,7 @@
             </div>
 
             <button id="btn-save" onclick="saveProduct()">+ บันทึกสินค้า</button>
-            <button id="btn-cancel" onclick="resetForm()" style="display:none; margin-top: 10px;">ยกเลิกการแก้ไข</button>
+            <button id="btn-cancel" onclick="resetForm()" style="display:none; margin-top: 10px; background-color: #95a5a6;">ยกเลิกการแก้ไข</button>
             
             <p id="status-msg" style="text-align: center; margin-top: 10px; font-size: 14px;"></p>
         </div>
