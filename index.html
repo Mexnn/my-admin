@@ -3,15 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Admin - จัดการสินค้า</title>
+    <title>Organic Admin - จัดการสต็อกผัก</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .image-upload-container { border: 2px dashed #C8E6C9; padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; }
-        #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* CSS เพิ่มเติมสำหรับส่วนอัปโหลดและป้ายสถานะ */
+        .image-upload-container { border: 2px dashed #C8E6C9; padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; position: relative; }
+        #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-left: auto; margin-right: auto; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .status-ok { background-color: #d4edda; color: #155724; }
         .status-out { background-color: #f8d7da; color: #721c24; }
+
+        /* 🟢 CSS สำหรับป๊อปอัปโมดอล (Popup) */
+        .modal-overlay {
+            display: none; /* ซ่อนไว้ก่อน */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* ฉากหลังสีดำจางๆ */
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+        .modal-overlay.show { display: flex; }
+        
+        .modal-content {
+            background-color: #fff;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 350px; width: 90%;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-icon { font-size: 40px; margin-bottom: 10px; display: block; }
+        .modal-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 20px; }
+        .modal-text { color: #7f8c8d; font-size: 16px; margin-bottom: 25px; line-height: 1.5; }
+        
+        .modal-actions { display: flex; justify-content: center; gap: 10px; }
+        .btn-modal { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; font-family: 'Prompt', sans-serif; }
+        
+        .btn-confirm { background-color: #27ae60; color: white; }
+        .btn-confirm:hover { background-color: #219653; transform: translateY(-2px); }
+        
+        .btn-cancel { background-color: #ecf0f1; color: #7f8c8d; }
+        .btn-cancel:hover { background-color: #bdc3c7; }
+        
+        .btn-delete-confirm { background-color: #e74c3c; color: white; }
+        .btn-delete-confirm:hover { background-color: #c0392b; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -35,13 +79,13 @@
                 </div>
             </div>
 
-            <label style="margin-top: 10px;">สถานะสินค้า</label>
-            <select id="pStatus" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+            <label style="margin-top: 15px;">สถานะสินค้า</label>
+            <select id="pStatus" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: white; font-family: 'Prompt', sans-serif;">
                 <option value="In Stock">✅ สินค้าพร้อมขาย</option>
                 <option value="Out of Stock">❌ สินค้าหมดชั่วคราว</option>
             </select>
 
-            <label style="margin-top: 10px;">รายละเอียดสินค้า</label>
+            <label style="margin-top: 15px;">รายละเอียดสินค้า</label>
             <textarea id="pDetail" rows="2" placeholder="เช่น สดจากไร่..."></textarea>
 
             <label style="margin-top: 20px;">รูปภาพสินค้า</label>
@@ -52,15 +96,27 @@
                 <img id="preview-img" src="" alt="Preview">
             </div>
 
-            <button id="btn-save" onclick="saveProduct()">+ บันทึกสินค้า</button>
+            <button id="btn-save" onclick="saveProduct()" style="margin-top: 20px;">+ บันทึกสินค้า</button>
             <button id="btn-cancel" onclick="resetForm()" style="display:none; margin-top: 10px; background-color: #95a5a6;">ยกเลิกการแก้ไข</button>
         </div>
 
         <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #ddd;">
 
         <h3>📋 รายการสินค้าทั้งหมด</h3>
-        <div id="loading" style="text-align:center; color:#7f8c8d;">⏳ กำลังโหลดข้อมูล...</div>
+        <div id="loading" style="text-align:center; color:#7f8c8d; margin-top:20px;">⏳ กำลังโหลดข้อมูล...</div>
         <div id="product-list"></div>
+    </div>
+
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span id="modal-icon" class="modal-icon">⚠️</span>
+            <h3 id="modal-title" class="modal-title">แจ้งเตือน</h3>
+            <p id="modal-message" class="modal-text">ข้อความ...</p>
+            <div class="modal-actions">
+                <button id="btn-modal-cancel" class="btn-modal btn-cancel">ยกเลิก</button>
+                <button id="btn-modal-confirm" class="btn-modal btn-confirm">ตกลง</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
