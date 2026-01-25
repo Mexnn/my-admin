@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Admin - จัดการสต็อกผัก</title>
+    <title>Organic Admin - จัดการสินค้า</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
         .image-upload-container { border: 2px dashed #C8E6C9; padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; }
         #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn-delete { background-color: #ff6b6b; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; }
-        .btn-edit { background-color: #f1c40f; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-ok { background-color: #d4edda; color: #155724; }
+        .status-out { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
@@ -29,23 +30,18 @@
                     <input type="number" id="pPrice" placeholder="0">
                 </div>
                 <div style="flex: 1;">
-                    <label>หน่วยขาย / ปริมาณ</label>
-                    <input type="text" id="pUnit" placeholder="เช่น กิโลกรัม, ถุง, กำ">
+                    <label>หน่วยขาย</label>
+                    <input type="text" id="pUnit" placeholder="เช่น กิโลกรัม, ถุง">
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px;">
-                <div style="flex: 1;">
-                    <label>น้ำหนักสินค้า (กรัม)</label>
-                    <input type="number" id="pWeight" placeholder="เช่น 500">
-                </div>
-                <div style="flex: 1;">
-                    <label>สต็อกคงเหลือ</label>
-                    <input type="number" id="pStock" placeholder="จำนวน">
-                </div>
-            </div>
+            <label style="margin-top: 10px;">สถานะสินค้า</label>
+            <select id="pStatus" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                <option value="In Stock">✅ สินค้าพร้อมขาย</option>
+                <option value="Out of Stock">❌ สินค้าหมดชั่วคราว</option>
+            </select>
 
-            <label>รายละเอียดสินค้า</label>
+            <label style="margin-top: 10px;">รายละเอียดสินค้า</label>
             <textarea id="pDetail" rows="2" placeholder="เช่น สดจากไร่..."></textarea>
 
             <label style="margin-top: 20px;">รูปภาพสินค้า</label>
@@ -58,13 +54,11 @@
 
             <button id="btn-save" onclick="saveProduct()">+ บันทึกสินค้า</button>
             <button id="btn-cancel" onclick="resetForm()" style="display:none; margin-top: 10px; background-color: #95a5a6;">ยกเลิกการแก้ไข</button>
-            
-            <p id="status-msg" style="text-align: center; margin-top: 10px; font-size: 14px;"></p>
         </div>
 
         <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #ddd;">
 
-        <h3>📋 รายการในสต็อก</h3>
+        <h3>📋 รายการสินค้าทั้งหมด</h3>
         <div id="loading" style="text-align:center; color:#7f8c8d;">⏳ กำลังโหลดข้อมูล...</div>
         <div id="product-list"></div>
     </div>

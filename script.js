@@ -1,28 +1,22 @@
+// ⚠️ ใส่ URL ใหม่จากการ Deploy ล่าสุด
 const API_URL = "https://script.google.com/macros/s/AKfycbzdL2DbxQeJ6JCSxKvmNW_I_4aCrZwQQ-JUuB6sqVqD4ki3yIMQpbAjjQbJUq0H4qAL/exec"; 
 
 let allProducts = [];
 let isEditing = false;
 let editingRow = null;
 
-window.onload = function() {
-    loadProducts();
-};
+window.onload = loadProducts;
 
 function loadProducts() {
-    const loading = document.getElementById('loading');
-    if(loading) loading.style.display = 'block';
-    
+    document.getElementById('loading').style.display = 'block';
     fetch(API_URL)
         .then(res => res.json())
         .then(data => {
             allProducts = data;
             renderTable(data);
-            if(loading) loading.style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
         })
-        .catch(err => {
-            console.error(err);
-            if(loading) loading.innerText = "❌ ไม่สามารถโหลดข้อมูลได้";
-        });
+        .catch(err => console.error(err));
 }
 
 function renderTable(products) {
@@ -33,20 +27,24 @@ function renderTable(products) {
         const card = document.createElement('div');
         card.style = "border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:8px; display:flex; align-items:center; gap:15px; background:white;";
 
+        // แสดงสถานะแบบ Badge
+        const statusBadge = item.Status === "In Stock" 
+            ? `<span class="status-badge status-ok">พร้อมขาย</span>` 
+            : `<span class="status-badge status-out">หมด</span>`;
+
         const imgDisplay = item.ImageURL ? `<img src="${item.ImageURL}" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">` : `<div style="width:60px; height:60px; background:#eee; border-radius:5px;"></div>`;
 
         const info = `
             <div style="flex:1;">
-                <div style="font-weight:bold; font-size:16px;">${item.Name}</div>
+                <div style="font-weight:bold; font-size:16px;">${item.Name} ${statusBadge}</div>
                 <div style="color:#27ae60;">${item.Price} บาท / ${item.Unit}</div>
-                <div style="font-size:12px; color:#7f8c8d;">หนัก: ${item.Weight}g | สต็อก: ${item.Stock}</div>
             </div>
         `;
 
         const actions = `
             <div>
-                <button class="btn-edit" onclick="editProduct('${item.row}')" style="background:#f1c40f; border:none; padding:5px 8px; border-radius:4px; cursor:pointer;">✏️</button>
-                <button class="btn-delete" onclick="deleteProduct('${item.row}')" style="background:#ff6b6b; border:none; padding:5px 8px; border-radius:4px; cursor:pointer; margin-left:5px;">🗑️</button>
+                <button onclick="editProduct('${item.row}')" style="background:#f1c40f; border:none; padding:5px 8px; border-radius:4px; cursor:pointer;">✏️</button>
+                <button onclick="deleteProduct('${item.row}')" style="background:#ff6b6b; border:none; padding:5px 8px; border-radius:4px; cursor:pointer; margin-left:5px;">🗑️</button>
             </div>
         `;
 
@@ -59,14 +57,13 @@ function saveProduct() {
     const name = document.getElementById('pName').value;
     const price = document.getElementById('pPrice').value;
     const unit = document.getElementById('pUnit').value;
-    const weight = document.getElementById('pWeight').value;
-    const stock = document.getElementById('pStock').value;
+    const status = document.getElementById('pStatus').value; // รับค่าสถานะ
     const detail = document.getElementById('pDetail').value;
     const fileInput = document.getElementById('pImgFile');
     const oldUrl = document.getElementById('pImgOldUrl').value;
 
-    if (!name || !price || !unit) {
-        alert("กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, ราคา, หน่วยขาย)");
+    if (!name || !price) {
+        alert("กรุณากรอกชื่อและราคา");
         return;
     }
 
@@ -77,9 +74,7 @@ function saveProduct() {
     if (fileInput.files.length > 0) {
         const reader = new FileReader();
         reader.readAsDataURL(fileInput.files[0]);
-        reader.onload = function () {
-            sendData(reader.result);
-        };
+        reader.onload = function () { sendData(reader.result); };
     } else {
         sendData(isEditing ? oldUrl : "");
     }
@@ -91,23 +86,19 @@ function saveProduct() {
             name: name,
             price: price,
             unit: unit,
-            weight: weight,
-            stock: stock,
+            status: status, // ส่งสถานะไป
             detail: detail,
             image: imgData
         };
 
-        fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(payload)
-        })
+        fetch(API_URL, { method: "POST", body: JSON.stringify(payload) })
         .then(res => res.text())
-        .then(result => {
-            alert("✅ บันทึกข้อมูลสำเร็จ");
+        .then(() => {
+            alert("✅ บันทึกสำเร็จ!");
             resetForm();
             loadProducts();
         })
-        .catch(err => alert("❌ ผิดพลาด: " + err))
+        .catch(err => alert("❌ Error: " + err))
         .finally(() => {
             saveBtn.innerText = "+ บันทึกสินค้า";
             saveBtn.disabled = false;
@@ -116,18 +107,9 @@ function saveProduct() {
 }
 
 function deleteProduct(rowId) {
-    if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?")) return;
-
-    fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "deleteProduct", row: rowId })
-    })
-    .then(res => res.text())
-    .then(result => {
-        alert("🗑️ ลบข้อมูลเรียบร้อย");
-        loadProducts();
-    })
-    .catch(err => alert("❌ ลบไม่สำเร็จ: " + err));
+    if (!confirm("ยืนยันการลบ?")) return;
+    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "deleteProduct", row: rowId }) })
+    .then(() => { loadProducts(); alert("ลบเรียบร้อย"); });
 }
 
 function editProduct(rowId) {
@@ -137,16 +119,12 @@ function editProduct(rowId) {
     document.getElementById('pName').value = product.Name;
     document.getElementById('pPrice').value = product.Price;
     document.getElementById('pUnit').value = product.Unit;
-    document.getElementById('pWeight').value = product.Weight;
-    document.getElementById('pStock').value = product.Stock;
+    document.getElementById('pStatus').value = product.Status || "In Stock"; // ดึงสถานะมาโชว์
     document.getElementById('pDetail').value = product.Detail;
     document.getElementById('pImgOldUrl').value = product.ImageURL;
 
     const preview = document.getElementById('preview-img');
-    if (product.ImageURL) {
-        preview.src = product.ImageURL;
-        preview.style.display = "block";
-    }
+    if (product.ImageURL) { preview.src = product.ImageURL; preview.style.display = "block"; }
 
     isEditing = true;
     editingRow = rowId;
@@ -159,11 +137,11 @@ function resetForm() {
     document.getElementById('pName').value = "";
     document.getElementById('pPrice').value = "";
     document.getElementById('pUnit').value = "";
-    document.getElementById('pWeight').value = "";
-    document.getElementById('pStock').value = "";
     document.getElementById('pDetail').value = "";
     document.getElementById('pImgFile').value = "";
     document.getElementById('preview-img').style.display = "none";
+    document.getElementById('pStatus').value = "In Stock"; // คืนค่าเริ่มต้น
+    
     isEditing = false;
     editingRow = null;
     document.getElementById('btn-save').innerText = "+ บันทึกสินค้า";
