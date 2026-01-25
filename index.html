@@ -7,55 +7,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* CSS เพิ่มเติมสำหรับส่วนอัปโหลดและป้ายสถานะ */
+        /* CSS เดิม + ส่วนตกแต่งเพิ่มเติม */
         .image-upload-container { border: 2px dashed #C8E6C9; padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; position: relative; }
         #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-left: auto; margin-right: auto; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .status-ok { background-color: #d4edda; color: #155724; }
         .status-out { background-color: #f8d7da; color: #721c24; }
 
-        /* 🟢 CSS สำหรับป๊อปอัปโมดอล (Popup) */
+        /* 🟢 CSS สำหรับ Popup Modal (แก้ใหม่ให้สวยและอยู่บนสุดแน่นอน) */
         .modal-overlay {
-            display: none; /* ซ่อนไว้ก่อน */
+            display: none; /* ซ่อนเป็นค่าเริ่มต้น */
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* ฉากหลังสีดำจางๆ */
-            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.6); /* ฉากหลังมืดลง */
+            z-index: 9999; /* อยู่บนสุด */
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(3px); /* เบลอฉากหลังนิดๆ */
         }
-        .modal-overlay.show { display: flex; }
         
+        .modal-overlay.show { display: flex; } /* คลาสสำหรับแสดงผล */
+
         .modal-content {
             background-color: #fff;
-            padding: 25px 30px;
-            border-radius: 15px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             text-align: center;
-            max-width: 350px; width: 90%;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 380px; width: 90%;
+            animation: modalPop 0.3s ease-out;
+            font-family: 'Prompt', sans-serif;
         }
-        @keyframes popIn {
+
+        @keyframes modalPop {
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+
+        .modal-icon { font-size: 48px; margin-bottom: 15px; display: block; }
+        .modal-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 22px; font-weight: 600; }
+        .modal-text { color: #555; font-size: 16px; margin-bottom: 25px; line-height: 1.6; }
         
-        .modal-icon { font-size: 40px; margin-bottom: 10px; display: block; }
-        .modal-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 20px; }
-        .modal-text { color: #7f8c8d; font-size: 16px; margin-bottom: 25px; line-height: 1.5; }
+        .modal-actions { display: flex; justify-content: center; gap: 12px; }
+        .btn-modal { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.2s; font-family: 'Prompt', sans-serif; }
         
-        .modal-actions { display: flex; justify-content: center; gap: 10px; }
-        .btn-modal { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; font-family: 'Prompt', sans-serif; }
+        .btn-confirm-green { background-color: #27ae60; color: white; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
+        .btn-confirm-green:hover { background-color: #219653; transform: translateY(-2px); }
         
-        .btn-confirm { background-color: #27ae60; color: white; }
-        .btn-confirm:hover { background-color: #219653; transform: translateY(-2px); }
-        
+        .btn-confirm-red { background-color: #e74c3c; color: white; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); }
+        .btn-confirm-red:hover { background-color: #c0392b; transform: translateY(-2px); }
+
         .btn-cancel { background-color: #ecf0f1; color: #7f8c8d; }
         .btn-cancel:hover { background-color: #bdc3c7; }
-        
-        .btn-delete-confirm { background-color: #e74c3c; color: white; }
-        .btn-delete-confirm:hover { background-color: #c0392b; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -109,12 +112,12 @@
 
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-content">
-            <span id="modal-icon" class="modal-icon">⚠️</span>
+            <span id="modal-icon" class="modal-icon">🔔</span>
             <h3 id="modal-title" class="modal-title">แจ้งเตือน</h3>
             <p id="modal-message" class="modal-text">ข้อความ...</p>
             <div class="modal-actions">
                 <button id="btn-modal-cancel" class="btn-modal btn-cancel">ยกเลิก</button>
-                <button id="btn-modal-confirm" class="btn-modal btn-confirm">ตกลง</button>
+                <button id="btn-modal-confirm" class="btn-modal btn-confirm-green">ตกลง</button>
             </div>
         </div>
     </div>
