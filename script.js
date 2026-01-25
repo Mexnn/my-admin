@@ -1,5 +1,5 @@
 // ⚠️ ใส่ URL ใหม่จากการ Deploy ล่าสุด (เช็คให้ชัวร์นะครับ)
-const API_URL = "https://script.google.com/macros/s/AKfycbzdL2DbxQeJ6JCSxKvmNW_I_4aCrZwQQ-JUuB6sqVqD4ki3yIMQpbAjjQbJUq0H4qAL/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbxwgWRUl-pGIeGx1xlFWov2531i5SEvTa-htvYdm5JxMLU-j3YB4xF4z6ieGVYcckj_/exec"; 
 
 let allProducts = [];
 let isEditing = false;
