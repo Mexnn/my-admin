@@ -3,71 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Admin - จัดการสต็อกผัก</title>
+    <title>Organic Admin - เข้าสู่ระบบ</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* CSS เดิม + ส่วนตกแต่งเพิ่มเติม */
+        /* CSS เพิ่มเติมสำหรับ Login และ Modal */
+        /* ... (CSS เดิมของ Modal ที่ผมเคยให้ ยังคงอยู่) ... */
+        
         .image-upload-container { border: 2px dashed #C8E6C9; padding: 15px; text-align: center; border-radius: 10px; margin-top: 10px; position: relative; }
-        #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-left: auto; margin-right: auto; }
+        #preview-img { max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 8px; display: none; margin-left: auto; margin-right: auto; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .status-ok { background-color: #d4edda; color: #155724; }
         .status-out { background-color: #f8d7da; color: #721c24; }
 
-        /* 🟢 CSS สำหรับ Popup Modal (แก้ใหม่ให้สวยและอยู่บนสุดแน่นอน) */
+        /* 🟢 ส่วน Modal Popup (ที่เคยให้ไป) */
         .modal-overlay {
-            display: none; /* ซ่อนเป็นค่าเริ่มต้น */
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* ฉากหลังมืดลง */
-            z-index: 9999; /* อยู่บนสุด */
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(3px); /* เบลอฉากหลังนิดๆ */
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); z-index: 9999;
+            justify-content: center; align-items: center; backdrop-filter: blur(3px);
         }
-        
-        .modal-overlay.show { display: flex; } /* คลาสสำหรับแสดงผล */
-
+        .modal-overlay.show { display: flex; }
         .modal-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 380px; width: 90%;
-            animation: modalPop 0.3s ease-out;
-            font-family: 'Prompt', sans-serif;
+            background-color: #fff; padding: 30px; border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center;
+            max-width: 380px; width: 90%; animation: modalPop 0.3s ease-out; font-family: 'Prompt', sans-serif;
         }
-
-        @keyframes modalPop {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .modal-icon { font-size: 48px; margin-bottom: 15px; display: block; }
         .modal-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 22px; font-weight: 600; }
         .modal-text { color: #555; font-size: 16px; margin-bottom: 25px; line-height: 1.6; }
-        
         .modal-actions { display: flex; justify-content: center; gap: 12px; }
         .btn-modal { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.2s; font-family: 'Prompt', sans-serif; }
-        
-        .btn-confirm-green { background-color: #27ae60; color: white; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
-        .btn-confirm-green:hover { background-color: #219653; transform: translateY(-2px); }
-        
-        .btn-confirm-red { background-color: #e74c3c; color: white; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); }
-        .btn-confirm-red:hover { background-color: #c0392b; transform: translateY(-2px); }
-
+        .btn-confirm-green { background-color: #27ae60; color: white; }
+        .btn-confirm-red { background-color: #e74c3c; color: white; }
         .btn-cancel { background-color: #ecf0f1; color: #7f8c8d; }
-        .btn-cancel:hover { background-color: #bdc3c7; }
+
+        /* 🔒 ส่วน Login Screen (ใหม่ล่าสุด) */
+        #login-section {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; /* บังทุกอย่าง */
+        }
+        .login-card {
+            background: white; padding: 40px; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); text-align: center; width: 90%; max-width: 350px;
+        }
+        .login-input {
+            width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px;
+            margin: 15px 0; font-size: 16px; font-family: 'Prompt', sans-serif; box-sizing: border-box;
+            text-align: center;
+        }
+        .login-btn {
+            background-color: #2c3e50; color: white; border: none; padding: 12px 30px;
+            border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; transition: 0.2s;
+        }
+        .login-btn:hover { background-color: #34495e; transform: translateY(-2px); }
+        .error-msg { color: #e74c3c; font-size: 14px; margin-top: 10px; display: none; }
+        
+        /* ซ่อนเนื้อหาหลักไว้ก่อน */
+        #admin-content { display: none; }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <div id="login-section">
+        <div class="login-card">
+            <h1 style="margin:0; font-size:40px;">🥦</h1>
+            <h2 style="color:#2c3e50; margin:10px 0;">Admin Access</h2>
+            <p style="color:#7f8c8d; font-size:14px;">กรุณายืนยันตัวตนเพื่อจัดการสินค้า</p>
+            
+            <input type="password" id="admin-pass" class="login-input" placeholder="กรอกรหัสผ่าน..." onkeyup="if(event.key === 'Enter') checkAuth()">
+            <button onclick="checkAuth()" class="login-btn">เข้าสู่ระบบ</button>
+            <p id="login-error" class="error-msg">❌ รหัสผ่านไม่ถูกต้อง</p>
+        </div>
+    </div>
+
+    <div id="admin-content" class="container">
         <h1>🥗 Organic Stock Manager</h1>
         
         <div class="form-card">
             <h3>จัดการสินค้า</h3>
-            
             <label>ชื่อสินค้า</label>
             <input type="text" id="pName" placeholder="เช่น ผักกาดหอม">
 
@@ -122,6 +138,7 @@
         </div>
     </div>
 
+    <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// ⚠️ ตรวจสอบ URL นี้ให้เป็นอันล่าสุดของคุณ
+// ⚠️ ใส่ URL ใหม่จากการ Deploy ล่าสุด (เช็คให้ชัวร์นะครับ)
 const API_URL = "https://script.google.com/macros/s/AKfycbzdL2DbxQeJ6JCSxKvmNW_I_4aCrZwQQ-JUuB6sqVqD4ki3yIMQpbAjjQbJUq0H4qAL/exec"; 
 
 let allProducts = [];
@@ -6,23 +6,20 @@ let isEditing = false;
 let editingRow = null;
 let confirmCallback = null; 
 
-window.onload = function() {
-    loadProducts();
-    setupModal(); // เริ่มต้นระบบ Modal
-};
+// window.onload ถูกลบออกแล้ว เพราะเราจะเรียก loadProducts() ผ่านหน้า Login แทน
 
 // ---------------- ระบบ Modal (Popup) ----------------
 function setupModal() {
-    // ผูกปุ่มใน Modal ให้ทำงานเมื่อกด
     document.getElementById('btn-modal-cancel').onclick = closeModal;
     document.getElementById('btn-modal-confirm').onclick = () => {
-        if (confirmCallback) confirmCallback(); // ถ้ามีคำสั่งที่ฝากไว้ (เช่น ลบ) ให้ทำ
+        if (confirmCallback) confirmCallback();
         closeModal();
     };
 }
+// เรียก setupModal ทิ้งไว้เลยเพื่อให้พร้อมใช้
+setupModal();
 
 function showModal(title, message, icon, type, callback) {
-    // 1. ใส่ข้อความลงใน Modal
     document.getElementById('modal-title').innerText = title;
     document.getElementById('modal-message').innerText = message;
     document.getElementById('modal-icon').innerText = icon;
@@ -30,22 +27,18 @@ function showModal(title, message, icon, type, callback) {
     const confirmBtn = document.getElementById('btn-modal-confirm');
     const cancelBtn = document.getElementById('btn-modal-cancel');
     
-    confirmCallback = callback; // จำคำสั่งที่จะให้ทำต่อ
+    confirmCallback = callback; 
 
-    // 2. ปรับปุ่มตามประเภท (แจ้งเตือน vs ยืนยัน)
     if (type === 'confirm') {
-        // แบบถามยืนยัน (เช่น ลบ) -> มีปุ่มยกเลิก
         cancelBtn.style.display = 'inline-block';
-        confirmBtn.innerText = 'ยืนยันทำรายการ';
-        confirmBtn.className = 'btn-modal btn-confirm-red'; // ปุ่มแดง
+        confirmBtn.innerText = 'ยืนยัน';
+        confirmBtn.className = 'btn-modal btn-confirm-red'; 
     } else {
-        // แบบแจ้งเตือนเฉยๆ -> ไม่มีปุ่มยกเลิก
         cancelBtn.style.display = 'none';
         confirmBtn.innerText = 'ตกลง';
-        confirmBtn.className = 'btn-modal btn-confirm-green'; // ปุ่มเขียว
+        confirmBtn.className = 'btn-modal btn-confirm-green';
+        confirmCallback = null;
     }
-
-    // 3. แสดง Modal ออกมา
     document.getElementById('custom-modal').classList.add('show');
 }
 
@@ -116,7 +109,6 @@ function saveProduct() {
     const oldUrl = document.getElementById('pImgOldUrl').value;
 
     if (!name || !price) {
-        // เรียกใช้ Popup แจ้งเตือน
         showModal("ข้อมูลไม่ครบ", "กรุณากรอกชื่อสินค้าและราคาให้ครบถ้วน", "📝", "alert");
         return;
     }
@@ -137,18 +129,12 @@ function saveProduct() {
         const payload = {
             action: isEditing ? "editProduct" : "addProduct",
             row: isEditing ? editingRow : null,
-            name: name,
-            price: price,
-            unit: unit,
-            status: status,
-            detail: detail,
-            image: imgData
+            name: name, price: price, unit: unit, status: status, detail: detail, image: imgData
         };
 
         fetch(API_URL, { method: "POST", body: JSON.stringify(payload) })
         .then(res => res.text())
         .then(() => {
-            // เรียกใช้ Popup แจ้งสำเร็จ
             showModal("สำเร็จ!", "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", "✅", "alert");
             resetForm();
             loadProducts();
@@ -164,14 +150,12 @@ function saveProduct() {
 }
 
 function deleteProduct(rowId) {
-    // จุดสำคัญ: ตรงนี้เรียก showModal แทน window.confirm ของเดิม
     showModal(
         "ยืนยันการลบ", 
-        "คุณต้องการลบสินค้านี้ออกจากสต็อกใช่หรือไม่? \n(การกระทำนี้ไม่สามารถย้อนกลับได้)", 
+        "คุณต้องการลบสินค้านี้ออกจากสต็อกใช่หรือไม่?", 
         "🗑️", 
         "confirm", 
         function() {
-            // โค้ดในนี้จะทำงานก็ต่อเมื่อกดปุ่ม "ยืนยันทำรายการ" ใน Popup เท่านั้น
             fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "deleteProduct", row: rowId }) })
             .then(() => { 
                 loadProducts(); 
@@ -184,17 +168,14 @@ function deleteProduct(rowId) {
 function editProduct(rowId) {
     const product = allProducts.find(p => p.row == rowId);
     if (!product) return;
-
     document.getElementById('pName').value = product.Name;
     document.getElementById('pPrice').value = product.Price;
     document.getElementById('pUnit').value = product.Unit;
     document.getElementById('pStatus').value = product.Status || "In Stock";
     document.getElementById('pDetail').value = product.Detail;
     document.getElementById('pImgOldUrl').value = product.ImageURL;
-
     const preview = document.getElementById('preview-img');
     if (product.ImageURL) { preview.src = product.ImageURL; preview.style.display = "block"; }
-
     isEditing = true;
     editingRow = rowId;
     document.getElementById('btn-save').innerText = "💾 บันทึกการแก้ไข";
@@ -210,7 +191,6 @@ function resetForm() {
     document.getElementById('pImgFile').value = "";
     document.getElementById('preview-img').style.display = "none";
     document.getElementById('pStatus').value = "In Stock";
-    
     isEditing = false;
     editingRow = null;
     document.getElementById('btn-save').innerText = "+ บันทึกสินค้า";
